@@ -78,6 +78,11 @@ def take_test(lesson_id):
     questions = Question.query.filter_by(lesson_id=lesson_id).all()
     return render_template('test.html', questions=questions)
 
+@views.route('/profile')
+@login_required
+def profile():
+    return render_template('profile.html', user=current_user)
+
 @views.route('/submit-test', methods=['POST'])
 @login_required
 def submit_test():

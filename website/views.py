@@ -83,7 +83,7 @@ def take_test(lesson_id):
 @login_required
 def profile():
     user = current_user
-    user_progresses = UserProgress.query.filter_by(id=user.id).all()
+    user_progress = UserProgress.query.filter_by(id=user.id).all()
 
     if request.method == 'POST':
         name = request.form.get('name')
@@ -94,13 +94,7 @@ def profile():
             user.dob = datetime.strptime(dob, '%Y-%m-%d')
         db.session.commit()
         return redirect(url_for('views.profile'))
-    if not user_progresses:
-        print("No progress found" )
-    else:
-        for progress in user_progresses:
-            print("Found progress for lesson:", progress.lesson_id)
-
-    return render_template('profile.html', user=user, userprogress=user_progresses)
+    return render_template('profile.html', user=user, userprogress=user_progress)
 
 @views.route('/submit-test', methods=['POST'])
 @login_required

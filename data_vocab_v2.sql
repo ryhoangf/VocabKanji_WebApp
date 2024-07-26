@@ -5,6 +5,7 @@ CREATE TABLE "UserProgress"(
     "times_reviewed" INTEGER NULL,
     "next_review" TIMESTAMP(0) WITHOUT TIME ZONE NULL
 );
+
 ALTER TABLE
     "UserProgress" ADD PRIMARY KEY("progress_id");
 CREATE TABLE "Vocabulary"(
@@ -15,16 +16,20 @@ CREATE TABLE "Vocabulary"(
     "meaning" TEXT NOT NULL,
     "example_sentence" TEXT NULL
 );
+
 ALTER TABLE
     "Vocabulary" ADD PRIMARY KEY("vocab_id");
+
 CREATE TABLE "Lesson"(
     "lesson_id" INTEGER NOT NULL,
     "level_id" INTEGER NULL,
     "title" VARCHAR(255) NOT NULL,
     "description" TEXT NULL
 );
+
 ALTER TABLE
     "Lesson" ADD PRIMARY KEY("lesson_id");
+
 CREATE TABLE "Question"(
     "question_id" INTEGER NOT NULL,
     "lesson_id" INTEGER NOT NULL,
@@ -36,17 +41,23 @@ CREATE TABLE "Question"(
     "option_4" TEXT NOT NULL,
     "correct_answer" TEXT NOT NULL
 );
+
 ALTER TABLE
     "Question" ADD PRIMARY KEY("question_id");
+
 CREATE TABLE "User"(
     "id" SERIAL,
     "username" VARCHAR(50) NOT NULL,
     "password" VARCHAR(255) NOT NULL,
     "email" VARCHAR(100) NOT NULL,
-    "created_at" TIMESTAMP(0) WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP
+    "created_at" TIMESTAMP(0) WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
+    "name" VARCHAR(100) NULL,       
+    "dob" DATE NULL                    
 );
+
 ALTER TABLE
     "User" ADD PRIMARY KEY("id");
+
 CREATE TABLE "Kanji"(
     "kanji_id" BIGINT NOT NULL,
     "lesson_id" BIGINT NOT NULL,
@@ -57,8 +68,10 @@ CREATE TABLE "Kanji"(
     "meaning" TEXT NOT NULL,
     "example_sentence" TEXT NOT NULL
 );
+
 ALTER TABLE
     "Kanji" ADD PRIMARY KEY("kanji_id");
+
 CREATE TABLE "Comment"(
     "comment_id" INTEGER NOT NULL,
     "word_id" INTEGER NULL,
@@ -67,6 +80,7 @@ CREATE TABLE "Comment"(
     "created_at" TIMESTAMP(0) WITHOUT TIME ZONE NULL DEFAULT CURRENT_TIMESTAMP,
     "kanji_id" INTEGER NULL
 );
+
 ALTER TABLE
     "Comment" ADD PRIMARY KEY("comment_id");
 ALTER TABLE
@@ -85,6 +99,17 @@ ALTER TABLE
     "Kanji" ADD CONSTRAINT "kanji_lesson_id_foreign" FOREIGN KEY("lesson_id") REFERENCES "Lesson"("lesson_id");
 ALTER TABLE
     "UserProgress" ADD CONSTRAINT "userprogress_id_foreign" FOREIGN KEY("id") REFERENCES "User"("id");
+
+
+INSERT INTO "Lesson" (lesson_id, level_id, title, description) VALUES
+(1,5,'Lesson 1','Minna No Nihongo 1'),
+(2,5,'Lesson 2','Minna No Nihongo 1'),
+(3,5,'Lesson 3','Minna No Nihongo 1'),
+(26,4,'Lesson 26','Minna No Nihongo 2'),
+(27,4,'Lesson 27','Minna No Nihongo 2'),
+(28,4,'Lesson 28','Minna No Nihongo 2'),
+(29,4,'Lesson 29','Minna No Nihongo 2');
+
 INSERT INTO "Vocabulary" (vocab_id, lesson_id, hiragana, word, meaning, example_sentence) VALUES
 (1, 1, 'わたし', '私', 'Tôi', 'わたしはがくせいです。(Tôi là học sinh.)'),
 (2, 1, 'あなた', '貴方', 'Bạn', 'あなたはどこから来ましたか？(Bạn đến từ đâu?)'),
@@ -155,12 +180,3 @@ INSERT INTO "Vocabulary" (vocab_id, lesson_id, hiragana, word, meaning, example_
 (755, 29, 'たしか', '確か', 'Chắc là', 'たしかにそうです。(Chắc là như vậy.)'),
 (756, 29, '[ああ、]よかった', '[ああ、]よかった', '[Ôi,] tốt quá.', '[ああ、]よかったです。(Ôi, tốt quá.)'),
 (757, 29, 'しんじゅく', '新宿', 'Tên một địa điểm/nhà ga ở Tokyo', 'しんじゅくに行きます。(Đi đến Shinjuku.)');
-
-INSERT INTO "Lesson" (lesson_id, level_id, title, description) VALUES
-(1,5,'Lesson 1','Minna No Nihongo 1'),
-(2,5,'Lesson 2','Minna No Nihongo 1'),
-(3,5,'Lesson 3','Minna No Nihongo 1'),
-(26,4,'Lesson 26','Minna No Nihongo 2'),
-(27,4,'Lesson 27','Minna No Nihongo 2'),
-(28,4,'Lesson 28','Minna No Nihongo 2'),
-(29,4,'Lesson 29','Minna No Nihongo 2');

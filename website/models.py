@@ -7,10 +7,12 @@ from datetime import datetime
 class User(db.Model, UserMixin):
     __tablename__ = 'User'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    name = db.Column(db.String(100), nullable=True)  
+    dob = db.Column(db.Date, nullable=True) 
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(255), nullable=False)
     email = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime,default=func.now())
+    created_at = db.Column(db.DateTime,default=func.now())         
     progress = db.relationship('UserProgress', backref='user', lazy=True)
     comments = db.relationship('Comment', backref='user', lazy=True) 
 

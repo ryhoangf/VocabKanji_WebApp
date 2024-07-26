@@ -1,7 +1,8 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from .models import User, Lesson, Vocabulary, Question, Comment
+from .models import User, Lesson, Vocabulary, Question, Comment, UserProgress
 from flask_login import login_required, current_user
 from . import db
+from datetime import datetime
 
 views = Blueprint('views', __name__)
 
@@ -78,10 +79,28 @@ def take_test(lesson_id):
     questions = Question.query.filter_by(lesson_id=lesson_id).all()
     return render_template('test.html', questions=questions)
 
-@views.route('/profile')
+@views.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-    return render_template('profile.html', user=current_user)
+    user = current_user
+    user_progresses = UserProgress.query.filter_by(id=user.id).all()
+
+    if request.method == 'POST':
+        name = request.form.get('name')
+        dob = request.form.get('dob')
+        if name:
+            user.name = name
+        if dob:
+            user.dob = datetime.strptime(dob, '%Y-%m-%d')
+        db.session.commit()
+        return redirect(url_for('views.profile'))
+    if not user_progresses:
+        print("No progress found" )
+    else:
+        for progress in user_progresses:
+            print("Found progress for lesson:", progress.lesson_id)
+
+    return render_template('profile.html', user=user, userprogress=user_progresses)
 
 @views.route('/submit-test', methods=['POST'])
 @login_required

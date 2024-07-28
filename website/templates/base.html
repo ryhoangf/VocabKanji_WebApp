@@ -41,8 +41,8 @@
 
       .notification-dot {
         position: absolute;
-        top: -5px;
-        right: -10px;
+        top: 7px;
+        right: -5px;
         background-color: red;
         border-radius: 50%;
         width: 10px;
@@ -179,58 +179,67 @@
     ></script>
     <script>
       let notificationsVisible = false;
-      let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-      let currentUserId = "{{ current_user.id }}";
-      let lastScrollTop = 0;
-
+      let notifications = JSON.parse(localStorage.getItem('notifications')) || []; // Mảng hai chiều
+      let currentUserId = "{{ current_user.id }}"; // Lấy ID của người dùng hiện tại
+      let lastScrollTop = 0; // Biến để lưu vị trí cuộn trước đó
+  
       function toggleNotifications() {
           const notificationList = document.getElementById('notification-list');
           const notificationDot = document.getElementById('notification-dot');
-
+  
           notificationsVisible = !notificationsVisible;
           if (notificationsVisible) {
               notificationList.classList.add('active');
-              notificationDot.style.display = 'none';
-              displayNotifications(currentUserId);
+              notificationDot.style.display = 'none'; // Ẩn chấm đỏ khi xem thông báo
+              displayNotifications(currentUserId); // Hiện thông báo cho người dùng hiện tại
           } else {
               notificationList.classList.remove('active');
           }
       }
-
+  
       function fetchNotifications(userId) {
           fetch(`/update_progress/${userId}`, { method: 'POST' })
               .then(response => response.json())
               .then(data => {
                   if (data.status === "success") {
                       const newNotifications = data.notifications;
+  
+                      // Kiểm tra xem user_id đã tồn tại trong mảng chưa
                       const userNotifications = notifications.find(n => n[0] === userId);
                       if (userNotifications) {
-                          userNotifications[1] = [...newNotifications, ...userNotifications[1]];
+                          userNotifications[1] = [...newNotifications, ...userNotifications[1]]; // Thêm thông báo mới vào
                       } else {
-                          notifications.push([userId, newNotifications]);
+                          notifications.push([userId, newNotifications]); // Tạo mới nếu chưa tồn tại
                       }
+  
+                      // Giới hạn số lượng thông báo lưu trữ
                       const currentUserNotifications = notifications.find(n => n[0] === userId)[1];
                       if (currentUserNotifications.length > 30) {
-                          currentUserNotifications.splice(0, currentUserNotifications.length - 30);
+                          currentUserNotifications.splice(currentUserNotifications.length - 30, currentUserNotifications.length ); // Giữ lại 30 thông báo mới nhất
                       }
+  
+                      // Hiện chấm đỏ nếu có thông báo mới cho user hiện tại
                       if (newNotifications.length > 0 && userNotifications) {
                           document.getElementById('notification-dot').style.display = 'block';
                       } else {
-                          document.getElementById('notification-dot').style.display = 'none';
+                          document.getElementById('notification-dot').style.display = 'none'; // Ẩn chấm đỏ nếu không có thông báo mới
                       }
+  
                       localStorage.setItem('notifications', JSON.stringify(notifications));
-                      displayNotifications(userId);
+                      displayNotifications(userId); // Hiện thông báo cho người dùng đã chọn
                   }
               })
               .catch(error => console.error('Error fetching notifications:', error));
       }
-
+  
       function displayNotifications(userId) {
           const notificationList = document.getElementById('notification-list');
           notificationList.innerHTML = '';
+  
+          // Lọc thông báo của user hiện tại
           const currentUserNotifications = notifications.find(n => n[0] === userId);
           const notificationsToDisplay = currentUserNotifications ? currentUserNotifications[1] : [];
-
+  
           notificationsToDisplay.forEach(notification => {
               const div = document.createElement('div');
               div.classList.add('notification-item');
@@ -238,29 +247,32 @@
               notificationList.appendChild(div);
           });
       }
-
+  
       window.onload = function() {
-          fetchNotifications(currentUserId);
-          displayNotifications(currentUserId);
+          fetchNotifications(currentUserId); // Lấy thông báo cho người dùng hiện tại
+          displayNotifications(currentUserId); // Hiện thông báo cho người dùng hiện tại
       };
-
-      setInterval(() => fetchNotifications(currentUserId), 60000);
-
+  
+      setInterval(() => fetchNotifications(currentUserId), 120000); // Cập nhật thông báo sau mỗi 2 phút
+  
+      // Xử lý sự kiện cuộn trang
       window.addEventListener('scroll', function() {
-          const navbar = document.querySelector('.navbar');
+          const navbar = document.getElementById('navbar');
           const notificationContainer = document.getElementById('notification-container');
           const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-
+  
           if (scrollTop > lastScrollTop) {
-              navbar.classList.add('hidden-navbar');
-              notificationContainer.style.opacity = '0';
+              // Đang cuộn xuống
+              navbar.classList.add('hidden-navbar'); // Ẩn thanh điều hướng
+              notificationContainer.style.opacity = '0'; // Ẩn chuông thông báo
           } else {
-              navbar.classList.remove('hidden-navbar');
-              notificationContainer.style.opacity = '1';
+              // Đang cuộn lên
+              navbar.classList.remove('hidden-navbar'); // Hiện thanh điều hướng
+              notificationContainer.style.opacity = '1'; // Hiện chuông thông báo
           }
-
-          lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+  
+          lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // Cập nhật lastScrollTop
       });
     </script>
-  </body>
+</body>
 </html>

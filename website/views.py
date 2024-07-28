@@ -215,9 +215,10 @@ def update_progress(user_id):
     notifications = []
 
     for progress in user_progresses:
-        if current_time >= progress.next_review:
-            notifications.append(f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}: It's time to review lesson {progress.lesson_id}.")
-
+        if progress.times_reviewd <= 5:
+            if current_time >= progress.next_review:
+                notifications.append(f"{current_time.strftime('%Y-%m-%d %H:%M:%S')}: It's time to review lesson {progress.lesson_id}.")
+                progress.next_review += timedelta(minutes=progress.times_reviewd * 2)
     db.session.commit()
     return jsonify({"status": "success", "notifications": notifications})
 

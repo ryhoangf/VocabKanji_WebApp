@@ -1,9 +1,9 @@
 Please make sure that the Python you are using is the latest version.
 
 Please install the following frameworks and packages before you test the program:
-pip install Flask
-pip install psycopg2-binary
-pip install flask_login
+    pip install Flask
+    pip install psycopg2-binary
+    pip install flask_login
 
 We used PosgreSQL for this web app, so please download this at: https://www.postgresql.org/download/.
 After installing PosgreSQL, please create a database and run the code in the file data_vocab_v2.db.

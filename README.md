@@ -24,4 +24,4 @@ with the following syntax:
 ```
     app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:your password@localhost/your database name'
 ```
-Finally, try running the `main.py` file to be able to use the program.
+Finally, try running the `main.py` file to use the program.

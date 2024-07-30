@@ -215,7 +215,7 @@
                       // Giới hạn số lượng thông báo lưu trữ
                       const currentUserNotifications = notifications.find(n => n[0] === userId)[1];
                       if (currentUserNotifications.length > 30) {
-                          currentUserNotifications.splice(currentUserNotifications.length, currentUserNotifications.length - 30); // Giữ lại 30 thông báo mới nhất
+                          currentUserNotifications.splice(currentUserNotifications.length - 30, currentUserNotifications.length); // Giữ lại 30 thông báo mới nhất
                       }
   
                       // Hiện chấm đỏ nếu có thông báo mới cho user hiện tại
